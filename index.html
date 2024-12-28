@@ -79,23 +79,46 @@
         }
     </style>
     <script>
-        // 댓글 추가 기능
+        // 로컬 스토리지를 사용해 댓글을 저장하고 불러오기
+        function loadComments() {
+            const commentList = document.getElementById('commentList');
+            const savedComments = JSON.parse(localStorage.getItem('comments')) || [];
+            commentList.innerHTML = ''; // 기존 댓글 초기화
+            savedComments.forEach(comment => {
+                const commentDiv = document.createElement('div');
+                commentDiv.classList.add('comment');
+                commentDiv.textContent = comment;
+                commentList.appendChild(commentDiv);
+            });
+        }
+
         function addComment() {
             const commentInput = document.getElementById('commentInput');
             const commentList = document.getElementById('commentList');
+            const newComment = commentInput.value.trim();
 
-            if (commentInput.value.trim() === '') {
+            if (newComment === '') {
                 alert('댓글을 입력해주세요.');
                 return;
             }
 
-            const newComment = document.createElement('div');
-            newComment.classList.add('comment');
-            newComment.textContent = commentInput.value;
+            // 로컬 스토리지에 댓글 저장
+            const savedComments = JSON.parse(localStorage.getItem('comments')) || [];
+            savedComments.push(newComment);
+            localStorage.setItem('comments', JSON.stringify(savedComments));
 
-            commentList.appendChild(newComment);
+            // 화면에 댓글 표시
+            const commentDiv = document.createElement('div');
+            commentDiv.classList.add('comment');
+            commentDiv.textContent = newComment;
+            commentList.appendChild(commentDiv);
+
+            // 입력창 초기화
             commentInput.value = '';
         }
+
+        // 페이지 로드 시 댓글 불러오기
+        window.onload = loadComments;
     </script>
 </head>
 <body>
